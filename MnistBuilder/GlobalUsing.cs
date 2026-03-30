@@ -1,0 +1,12 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Text;
+global using System.Windows.Input;
+global using MNIST.Model;
+global using System.Diagnostics.CodeAnalysis;
+global using MNIST.Utilities;
+global using System.Collections.ObjectModel;
+global using System.ComponentModel;
+global using System.IO;
+global using System.Runtime.CompilerServices;
+global using MNIST.ViewModel.Commands;

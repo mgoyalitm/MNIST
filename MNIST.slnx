@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MnistBuilder/MnistBuilder.csproj" />
+  <Project Path="xConsole/xConsole.csproj" Id="6e9d2a3c-b226-4f9f-9fd8-5ff432dbc71a" />
+</Solution>

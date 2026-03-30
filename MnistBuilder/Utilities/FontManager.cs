@@ -1,0 +1,239 @@
+﻿using SkiaSharp;
+
+namespace MNIST.Utilities;
+
+public static class FontManager
+{
+    public const string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    public const int CharacterCount = 62;
+    public const int MinRotation = -20;
+    public const int MaxRotation = 20;
+    public const int RotationStepSize = 5;
+    public const int RotationSteps = (MaxRotation - MinRotation) / RotationStepSize;
+    public const int CharSize = 21;
+
+    private const string CategoryTag = @"category:";
+    private const string NameTag = @"name:";
+    private const string FileTag = @"filename:";
+    private const string StyleTag = @"style:";
+    private const string WeightTag = @"weight:";
+
+    public static async IAsyncEnumerable<FontModel> DiscoverFontsAsync(string directory, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (Directory.Exists(directory) is false) yield break;
+        string[] pb_paths = await Task.Run(() => Directory.EnumerateFiles(directory, "*.pb", SearchOption.AllDirectories).ToArray());
+
+        foreach (string pb_path in pb_paths)
+        {
+            await foreach (FontModel font in GetFonts(pb_path, cancellationToken))
+            {
+                yield return font;
+            }
+        }
+    }
+
+    static async IAsyncEnumerable<FontModel> GetFonts(string pb_path, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (Path.Exists(pb_path) && Path.GetDirectoryName(pb_path) is string directory)
+        {
+            FontCategory category = FontCategory.Undefined;
+            string name = string.Empty;
+            FontStyle style = FontStyle.Regular;
+            string path = string.Empty;
+            int weight = -1;
+            bool in_font_block = false;
+
+            await foreach (string line in File.ReadLinesAsync(pb_path, cancellationToken))
+            {
+                string line_trimmed = line.Trim();
+                if (in_font_block == false && line.StartsWith(CategoryTag, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    category = GetValue(line).ToUpper() switch
+                    {
+                        "SANS_SERIF" => FontCategory.Sans_Serif,
+                        "SERIF" => FontCategory.Serif,
+                        "HANDWRITING" => FontCategory.Handwriting,
+                        "DISPLAY" => FontCategory.Display,
+                        "MONOSPACE" => FontCategory.Monospace,
+                        _ => FontCategory.Undefined
+                    };
+                }
+
+                if (in_font_block)
+                {
+                    if (line_trimmed.StartsWith(NameTag, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        name = GetValue(line);
+                    }
+                    else if (line_trimmed.StartsWith(StyleTag, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        style = GetValue(line).ToLower() switch
+                        {
+                            "normal" => FontStyle.Regular,
+                            "italic" => FontStyle.Italic,
+                            _ => FontStyle.Undefined,
+                        };
+                    }
+                    else if (line_trimmed.StartsWith(FileTag, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        path = Path.Combine(directory, GetValue(line));
+                    }
+                    else if (line_trimmed.StartsWith(WeightTag, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        weight = int.Parse(GetValue(line));
+                    }
+                }
+
+                if (line_trimmed.StartsWith("fonts {", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    in_font_block = true;
+                }
+
+                if (line_trimmed == "}" && in_font_block)
+                {
+                    if (string.IsNullOrWhiteSpace(name) is false &&
+                        File.Exists(path) && weight > 0)
+                    {
+                        yield return new(name, path, style, category, weight);
+                    }
+
+                    in_font_block = false;
+                    name = string.Empty;
+                    path = string.Empty;
+                    style = FontStyle.Undefined;
+                    weight = -1;
+                }
+            }
+        }
+
+        yield break;
+        static string GetValue(string entry)
+        {
+            try
+            {
+                string[] pair = entry.Split(':');
+                return pair[1].Trim().Trim('"');
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+    }
+
+    public static async Task WriteMNISTAsync(string font_directory, FontModel[] fonts, IProgress<int> progress, CancellationToken cancellationToken = default)
+    {
+        const int threads = 31;
+        using SemaphoreSlim semaphore_font = new(1);
+        using SemaphoreSlim semaphore = new(threads);
+
+        List<Task> tasks = [];
+        tasks.Capacity = threads;
+        int current = 0;
+
+        using SKPaint paint = new()
+        {
+            Color = SKColors.Black,
+            IsAntialias = true
+        };
+
+        for (int i = 0; i < fonts.Length; i++)
+        {
+            await semaphore_font.WaitAsync(cancellationToken);
+            using SemaphoreRelease release_font = new(semaphore_font);
+
+            FontModel font = fonts[i];
+
+            if (File.Exists(font.Path) is false)
+            {
+                continue;
+            }
+
+            string directory = Path.Combine(font_directory, font.Category.ToString().ToLower().Replace('_', '-'), font.Style.ToString());
+            string font_name = Path.GetFileNameWithoutExtension(font.Path);
+
+            using SKTypeface typeface = SKTypeface.FromFile(font.Path);
+            using SKFont sk_font = new(typeface, 32);
+            float offset_rotation = font.Style is FontStyle.Italic ? -7.5f : 0f;
+            tasks.Clear();
+
+            for (int m = 0; m < RotationSteps; m++)
+            {
+                for (int n = 0; n < CharacterCount; n++)
+                {
+                    char character = Characters[n];
+                    await semaphore.WaitAsync(cancellationToken);
+                    progress?.Report(++current);
+
+                    float rotation = MinRotation + m * RotationStepSize + offset_rotation;
+                    string character_file = Path.Combine(directory, character.ToString(), $"{font_name}-{m:D3}.jpg");
+
+                    Task task = Task.Run(() =>
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(character_file));
+                        using SemaphoreRelease release = new(semaphore);
+                        using SKBitmap bitmap = new(48, 48);
+                        using SKCanvas canvas = new(bitmap);
+
+                        canvas.Clear(SKColors.Transparent);
+                        canvas.Save();
+                        canvas.Translate(24, 24);
+                        canvas.RotateDegrees(rotation);
+                        canvas.DrawText(character.ToString(), 0, 0, sk_font, paint);
+                        canvas.Restore();
+
+                        SKRectI bounding_box = GetBounds(bitmap);
+                        float scale = Math.Min((float)CharSize / bounding_box.Width, (float)CharSize / bounding_box.Height);
+
+                        int width = Math.Min(CharSize, (int)(scale * bounding_box.Width));
+                        int height = Math.Min(CharSize, (int)(scale * bounding_box.Height));
+
+                        using SKBitmap char_bitmap = new(CharSize, CharSize);
+                        using SKCanvas char_canvas = new(char_bitmap);
+                        char_canvas.Clear(SKColors.White);
+
+                        int x_shift = (CharSize - width) / 2;
+                        int y_shift = (CharSize - height) / 2;
+
+                        SKRectI placement = new(x_shift, y_shift, x_shift + width, y_shift + height);
+                        char_canvas.DrawBitmap(bitmap, bounding_box, placement);
+                        using SKImage image = SKImage.FromBitmap(char_bitmap);
+                        using SKData image_data = image.Encode(SKEncodedImageFormat.Jpeg, 100);
+                        using Stream stream = File.OpenWrite(character_file);
+                        image_data.SaveTo(stream);
+                    }, cancellationToken);
+
+                    tasks.Add(task);
+                }
+            }
+
+            await Task.WhenAll(tasks);
+        }
+    }
+
+    private static SKRectI GetBounds(SKBitmap bitmap)
+    {
+        int x_min = bitmap.Width;
+        int y_min = bitmap.Height;
+        int x_max = 0;
+        int y_max = 0;
+
+        for (int x = 0; x < bitmap.Width; x++)
+        {
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                SKColor color = bitmap.GetPixel(x, y);
+
+                if (color.Alpha > 25)
+                {
+                    x_min = Math.Min(x, x_min);
+                    y_min = Math.Min(y, y_min);
+                    x_max = Math.Max(x, x_max);
+                    y_max = Math.Max(y, y_max);
+                }
+            }
+        }
+
+        return x_max < x_min || y_max < y_min ? SKRectI.Empty : new SKRectI(x_min, y_min, x_max + 1, y_max + 1);
+    }
+}
