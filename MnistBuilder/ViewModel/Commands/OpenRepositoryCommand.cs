@@ -22,7 +22,7 @@ public class OpenRepositoryCommand: ICommand
             if (dialog.ShowDialog(App.Current.MainWindow) is true)
             {
                 App.RepositoryPath = dialog.FolderName;
-                await App.ViewModel.FontController.InitializeFontsAsync();
+                await App.ViewModel.InitializeFontsAsync();
             }
 
         }

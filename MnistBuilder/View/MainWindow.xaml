@@ -17,35 +17,6 @@
     Width="800">
     
     <Window.InputBindings>
-        <KeyBinding 
-            Key="Left" 
-            Command="{Binding  FontController.ChangeFontCommand}">
-            <KeyBinding.CommandParameter>
-                <sys:Int32>-1</sys:Int32>
-            </KeyBinding.CommandParameter>
-        </KeyBinding>
-        <KeyBinding 
-            Key="Right" 
-            Command="{Binding FontController.ChangeFontCommand}">
-            <KeyBinding.CommandParameter>
-                <sys:Int32>1</sys:Int32>
-            </KeyBinding.CommandParameter>
-        </KeyBinding>
-        <KeyBinding 
-            Key="Return" 
-            Command="{Binding FontController.AddFontToBucketCommand}" 
-            CommandParameter="{Binding FontController.SelectedFont, Mode=OneWay}"/>
-        <KeyBinding
-            Key="Delete"
-            Command="{Binding FontController.DeleteFontCommand}"
-            CommandParameter="{Binding FontController.SelectedFont}"/>
-        <KeyBinding
-            Key="Delete"
-            Modifiers="Shift"
-            Command="{Binding FontController.ClearBucketCommand}"/>
-        <KeyBinding
-            Key="F5"
-            Command="{Binding FontController.GenerateMNISTCommand}"/>
         <KeyBinding
             Key="O"
             Modifiers="Ctrl"
@@ -54,6 +25,35 @@
             Key="S"
             Modifiers="Ctrl"
             Command="{StaticResource BrowseMnistDirectoryCommand}"/>
+        <KeyBinding
+            Key="Left" 
+            Command="{Binding ChangeFontCommand}">
+            <KeyBinding.CommandParameter>
+                <sys:Int32>-1</sys:Int32>
+            </KeyBinding.CommandParameter>
+        </KeyBinding>
+        <KeyBinding 
+            Key="Right" 
+            Command="{Binding ChangeFontCommand}">
+            <KeyBinding.CommandParameter>
+                <sys:Int32>1</sys:Int32>
+            </KeyBinding.CommandParameter>
+        </KeyBinding>
+        <KeyBinding 
+            Key="Return" 
+            Command="{Binding AddFontToBucketCommand}" 
+            CommandParameter="{Binding SelectedFont, Mode=OneWay}"/>
+        <KeyBinding
+            Key="Delete"
+            Command="{Binding DeleteFontCommand}"
+            CommandParameter="{Binding SelectedFont}"/>
+        <KeyBinding
+            Key="Delete"
+            Modifiers="Shift"
+            Command="{Binding ClearBucketCommand}"/>
+        <KeyBinding
+            Key="F5"
+            Command="{Binding GenerateMNISTCommand}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -102,7 +102,7 @@
         </Grid>
         <!--Font Preview and Bucket -->
         <Grid 
-            Visibility="{Binding FontController.FontsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+            Visibility="{Binding FontsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
             Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -126,7 +126,7 @@
                     FontSize="20"
                     TextAlignment="Center"
                     HorizontalAlignment="Center"
-                    Text="{Binding FontController.SelectedFont}"/>
+                    Text="{Binding SelectedFont}"/>
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80" />
@@ -142,9 +142,9 @@
                             Foreground="{StaticResource PreviewFontForegroundBrush}"
                             FontSize="32"
                             TextAlignment="Center"
-                            FontWeight="{Binding FontController.SelectedFont.Weight, Converter={StaticResource FontWeightConverter}, Mode=OneWay}"
-                            FontStyle="{Binding FontController.SelectedFont.Style, Converter={StaticResource FontStyleConverter}, Mode=OneWay}"
-                            FontFamily="{Binding FontController.SelectedFont, Converter={StaticResource FontFamilyConverter}, Mode=OneWay}"
+                            FontWeight="{Binding SelectedFont.Weight, Converter={StaticResource FontWeightConverter}, Mode=OneWay}"
+                            FontStyle="{Binding SelectedFont.Style, Converter={StaticResource FontStyleConverter}, Mode=OneWay}"
+                            FontFamily="{Binding SelectedFont, Converter={StaticResource FontFamilyConverter}, Mode=OneWay}"
                             HorizontalAlignment="Center">
                             <Run Text="the quick brown fox jumps over the lazy dog"/>
                             <LineBreak/>
@@ -169,9 +169,9 @@
                         TextAlignment="Center"
                         FontSize="16"
                         Foreground="{StaticResource DarkGrayForegroundBrush}">
-                        <Run Text="{Binding FontController.SerialNumber, Mode=OneWay}"/>
+                        <Run Text="{Binding SerialNumber, Mode=OneWay}"/>
                         <Run Text="/"/>
-                        <Run Text="{Binding FontController.FontsCountTotal, Mode=OneWay}"/>
+                        <Run Text="{Binding FontsCountTotal, Mode=OneWay}"/>
                     </TextBlock>
                 </Border>
                 <TextBlock
@@ -182,7 +182,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     TextAlignment="Center"
-                    Text="{Binding FontController.SelectedFont.Path}"/>
+                    Text="{Binding SelectedFont.Path}"/>
                 <Border 
                     Grid.Row="4" 
                     Background="Black"
@@ -193,7 +193,7 @@
                     CornerRadius="5"
                     BorderBrush="{StaticResource GrayForegroundBrush}"
                     BorderThickness="0.6">
-                    <ctrl:FontCanvas SelectedFont="{Binding FontController.SelectedFont, Mode=OneWay}"/>
+                    <ctrl:FontCanvas SelectedFont="{Binding SelectedFont, Mode=OneWay}"/>
                 </Border>
             </Grid>
             <Grid 
@@ -229,7 +229,7 @@
                     <ItemsControl
                         HorizontalAlignment="Center"
                         BorderThickness="0"
-                        ItemsSource="{Binding FontController.FontBucket, Mode=OneWay}">
+                        ItemsSource="{Binding FontBucket, Mode=OneWay}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock 
@@ -257,12 +257,12 @@
             Foreground="{StaticResource AccentBrushLight}"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            Visibility="{Binding FontController.GenerateMNISTCommand.IsExecuting, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
-            Maximum="{Binding FontController.GenerateMNISTCommand.Total, Mode=OneWay}"
-            Value="{Binding FontController.GenerateMNISTCommand.Current, Mode=OneWay}"/>
+            Visibility="{Binding GenerateMNISTCommand.IsExecuting, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+            Maximum="{Binding GenerateMNISTCommand.Total, Mode=OneWay}"
+            Value="{Binding GenerateMNISTCommand.Current, Mode=OneWay}"/>
         <!-- Help Panel Mini -->
         <Grid 
-            Visibility="{Binding FontController.FontsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+            Visibility="{Binding FontsLoaded, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
             Grid.Row="3" 
             Background="{StaticResource DarkBackgroundBrush}">
             <Grid.ColumnDefinitions>
@@ -313,7 +313,7 @@
         <Grid
             Grid.Row="1"
             Grid.RowSpan="3"
-            Visibility="{Binding FontController.FontsLoaded, Converter={StaticResource InvertedBooleanToVisibilityConverter}, Mode=OneWay}"
+            Visibility="{Binding FontsLoaded, Converter={StaticResource InvertedBooleanToVisibilityConverter}, Mode=OneWay}"
             Background="{StaticResource LightBackgroundBrush}">
             <Grid
                 HorizontalAlignment="Center"

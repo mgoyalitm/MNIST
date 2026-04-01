@@ -1,9 +1,7 @@
 ﻿namespace MNIST.ViewModel.Commands;
 
-public class GenerateMNISTCommand(FontController controller) : IProgress<int>, ICommand, INotifyPropertyChanged
+public class GenerateMNISTCommand: IProgress<int>, ICommand, INotifyPropertyChanged
 {
-    private readonly FontController _controller = controller;
-    
     private bool isRunning;
     private int total;
     private int current;
@@ -68,7 +66,7 @@ public class GenerateMNISTCommand(FontController controller) : IProgress<int>, I
 
         try
         {
-            FontModel[] fonts = [.. _controller.FontBucket];
+            FontModel[] fonts = [.. App.ViewModel.FontBucket];
             Current = 0;
             Total = fonts.Length * FontManager.CharacterCount * FontManager.RotationSteps;
             IsExecuting = true;

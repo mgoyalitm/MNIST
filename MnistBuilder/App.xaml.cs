@@ -15,7 +15,7 @@ public partial class App : Application
     private const string FontPathKey = "path";
     private const string ViewModelKey = "ViewModel";
 
-    public static MainViewModel ViewModel { get; private set; }
+    public static ViewModel.MainViewModel ViewModel { get; private set; }
     public static string RepositoryPath { get; set; }
     public static string DestinationPath { get; set; }
     
@@ -23,29 +23,29 @@ public partial class App : Application
     {
         EnsureConfigurationCreated();
 
-        if (Current.Resources[ViewModelKey] is MainViewModel viewModel)
+        if (Current.Resources[ViewModelKey] is ViewModel.MainViewModel viewModel)
         {
             ViewModel = viewModel;
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             RepositoryPath = config.AppSettings.Settings[RepositoryKey].Value;
             DestinationPath = config.AppSettings.Settings[DestinationKey].Value;
-            await viewModel.FontController.InitializeFontsAsync();
+            await viewModel.InitializeFontsAsync();
             string selected_font_path = config.AppSettings.Settings[SelectedFontKey].Value;
 
             Dictionary<string, FontModel> font_map = [];
      
-            foreach (FontModel font in viewModel.FontController.AvailableFonts)
+            foreach (FontModel font in viewModel.AvailableFonts)
             {
                 font_map[font.Path] = font;
             }
 
             if (font_map.TryGetValue(selected_font_path, out FontModel selected))
             {
-                int index = viewModel.FontController.AvailableFonts.IndexOf(selected);
+                int index = viewModel.AvailableFonts.IndexOf(selected);
 
                 if (index != -1)
                 {
-                    viewModel.FontController.SelectedFontIndex = index;
+                    viewModel.SelectedFontIndex = index;
                 }
             }
 
@@ -59,7 +59,7 @@ public partial class App : Application
 
                 if (string.IsNullOrWhiteSpace(font_path) is false && font_map.TryGetValue(font_path, out FontModel font))
                 {
-                    viewModel.FontController.FontBucket.Add(font);
+                    viewModel.FontBucket.Add(font);
                 }
             }
         }
@@ -75,7 +75,7 @@ public partial class App : Application
         Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         config.AppSettings.Settings[RepositoryKey].Value = RepositoryPath;
         config.AppSettings.Settings[DestinationKey].Value = DestinationPath;
-        config.AppSettings.Settings[SelectedFontKey].Value = ViewModel.FontController.SelectedFont?.Path;
+        config.AppSettings.Settings[SelectedFontKey].Value = ViewModel.SelectedFont?.Path;
         config.Save();
 
         XmlDocument configXml = new();
@@ -83,7 +83,7 @@ public partial class App : Application
         XmlElement bucket = configXml.DocumentElement.SelectSingleNode(FontBucketKey) as XmlElement;
         bucket.RemoveAll();
 
-        foreach (string path in ViewModel.FontController.FontBucket.Select(x => x.Path))
+        foreach (string path in ViewModel.FontBucket.Select(x => x.Path))
         {
             XmlElement element = configXml.CreateElement(FontItemKey);
             element.SetAttribute(FontPathKey, path);

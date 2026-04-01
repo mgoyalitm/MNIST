@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-
 namespace MNIST.ViewModel.Commands;
 public class BrowseMnistDirectoryCommand : ICommand
 {

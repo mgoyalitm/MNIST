@@ -1,8 +1,6 @@
 ﻿namespace MNIST.ViewModel.Commands;
-public class ChangeFontCommand(FontController controller) : ICommand
+public class ChangeFontCommand : ICommand
 {
-    private readonly FontController _controller = controller;
-
     public event EventHandler CanExecuteChanged { add { } remove { } }
     public bool CanExecute(object parameter) => parameter is int;
 
@@ -10,7 +8,7 @@ public class ChangeFontCommand(FontController controller) : ICommand
     {
         if (parameter is int index)
         {
-            _controller.SelectedFontIndex += index;
+            App.ViewModel.SelectedFontIndex += index;
         }
     }
 }
