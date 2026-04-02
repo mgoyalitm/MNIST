@@ -19,6 +19,7 @@
             <viewmodel:MainViewModel x:Key="ViewModel"/>
             <commands:OpenRepositoryCommand x:Key="OpenRepositoryCommand"/>
             <commands:BrowseMnistDirectoryCommand x:Key="BrowseMnistDirectoryCommand"/>
+            <commands:SelectFontCommand x:Key="SelectFontCommand"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>

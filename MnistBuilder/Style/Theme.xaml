@@ -1,22 +1,26 @@
 ﻿<ResourceDictionary 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:control="clr-namespace:MNIST.Controls">
+    xmlns:control="clr-namespace:MNIST.Controls"
+    xmlns:converter="clr-namespace:MNIST.Converters">
+    <converter:ContentToTextConverter x:Key="ContentToTextConverter"/>
+
+    <!-- Accented Brushes -->
     <SolidColorBrush x:Key="AccentBrushLight" Color="Gold"/>
     <SolidColorBrush x:Key="AccentBrush" Color="Goldenrod"/>
     <SolidColorBrush x:Key="AccentBrushDark" Color="DarkGoldenrod"/>
-    
+    <!-- Background Brushes -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="#2B2B2B"/>
     <SolidColorBrush x:Key="LightBackgroundBrush" Color="#303030"/>
     <SolidColorBrush x:Key="DarkBackgroundBrush" Color="#202020"/>
     <SolidColorBrush x:Key="PitchBlackBackgroundBrush" Color="#000000"/>
-    
+    <!-- Foreground Brushes -->
     <SolidColorBrush x:Key="LightForegroundBrush" Color="#A2FFFFFF"/>
     <SolidColorBrush x:Key="DarkForegroundBrush" Color="#202020"/>
     <SolidColorBrush x:Key="GrayForegroundBrush" Color="#A2A2A2"/>
     <SolidColorBrush x:Key="DarkGrayForegroundBrush" Color="#727272"/>
     <SolidColorBrush x:Key="PreviewFontForegroundBrush" Color="#FFFFFF"/>
-
+    <!-- Default Help Item Style-->
     <Style TargetType="control:HelpItemControl">
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -58,7 +62,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    <!-- Long Helpo Item Style -->
     <Style x:Key="HelpItemLongStyle" TargetType="control:HelpItemControl">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -101,4 +105,101 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- Accented Button Style -->
+    <Style x:Key="AccentedButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource AccentBrushLight}" />
+        <Setter Property="Foreground" Value="{StaticResource PitchBlackBackgroundBrush}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="ButtonBody"
+                        Padding="{TemplateBinding Padding}"
+                        CornerRadius="2"
+                        Background="{TemplateBinding Background}">
+                        <ContentPresenter
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" TargetName="ButtonBody" Value="0.3"/>
+                        </Trigger>
+                        <!-- Pressed -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsPressed"  Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Opacity" TargetName="ButtonBody" Value="0.8"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <!-- Mouse Over -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsPressed" Value="False"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Opacity" Value="1" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <!-- Normal -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsPressed" Value="False"/>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Opacity" Value="0.6" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- Hyperlink Button Style-->
+    <Style x:Key="HyperlinkButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource PreviewFontForegroundBrush}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <TextBlock 
+                        x:Name="TextContent"
+                        Focusable="False"
+                        MinWidth="60"
+                        Text="{TemplateBinding Content, Converter={StaticResource ContentToTextConverter}}"
+                        Background="{TemplateBinding Background}"
+                        Foreground="{TemplateBinding Foreground}"
+                        FontSize="{TemplateBinding FontSize}"
+                        FontWeight="{TemplateBinding FontWeight}"
+                        FontStyle="{TemplateBinding FontStyle}"
+                        FontFamily="{TemplateBinding FontFamily}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" Value="1"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="TextContent" Property="TextDecorations" Value="Underline"/>
+                            <Setter TargetName="TextContent"  Property="Foreground" Value="{StaticResource AccentBrushLight}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter> 
+    </Style>
+    
 </ResourceDictionary>

@@ -6,8 +6,12 @@ public class ClearBucketCommand : ICommand
     public bool CanExecute(object _) => true;
     public void Execute(object _)
     {
-        MessageBoxResult result = MessageBox.Show("This action will empty the font bucket.", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        if (result == MessageBoxResult.Yes)
+        if (App.ViewModel.FontBucket.Count < 1)
+        {
+            return;
+        }
+
+        if (App.GetConfirmation("Confirm", "This will permanently delete all fonts in the font bucket.", "Do you want to continue?") is true)
         {
             App.ViewModel.FontBucket.Clear();
         }

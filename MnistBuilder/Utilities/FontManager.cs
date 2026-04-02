@@ -42,7 +42,7 @@ public static class FontManager
             string name = string.Empty;
             FontStyle style = FontStyle.Regular;
             string path = string.Empty;
-            int weight = -1;
+            FontWeight weight = FontWeight.Undefined;
             bool in_font_block = false;
 
             await foreach (string line in File.ReadLinesAsync(pb_path, cancellationToken))
@@ -82,7 +82,19 @@ public static class FontManager
                     }
                     else if (line_trimmed.StartsWith(WeightTag, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        weight = int.Parse(GetValue(line));
+                        weight = int.Parse(GetValue(line)) switch
+                        {
+                            <= 150 => FontWeight.Thin,
+                            <= 250 => FontWeight.ExtraLight,
+                            <= 350 => FontWeight.Light,
+                            <= 450 => FontWeight.Normal,
+                            <= 550 => FontWeight.Medium,
+                            <= 650 => FontWeight.SemiBold,
+                            <= 750 => FontWeight.Bold,
+                            <= 850 => FontWeight.ExtraBold,
+                            _ => FontWeight.Black
+                        };
+
                     }
                 }
 
@@ -103,7 +115,7 @@ public static class FontManager
                     name = string.Empty;
                     path = string.Empty;
                     style = FontStyle.Undefined;
-                    weight = -1;
+                    weight = FontWeight.Undefined;
                 }
             }
         }

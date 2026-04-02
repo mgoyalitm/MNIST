@@ -21,6 +21,11 @@ public class OpenRepositoryCommand: ICommand
 
             if (dialog.ShowDialog(App.Current.MainWindow) is true)
             {
+                if (App.RepositoryPath != dialog.FolderName)
+                {
+                    App.ViewModel.FontBucket.Clear();
+                }
+
                 App.RepositoryPath = dialog.FolderName;
                 await App.ViewModel.InitializeFontsAsync();
             }

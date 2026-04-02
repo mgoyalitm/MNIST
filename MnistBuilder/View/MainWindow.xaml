@@ -15,16 +15,7 @@
     Title="MNIST Builder" 
     Height="450" 
     Width="800">
-    
     <Window.InputBindings>
-        <KeyBinding
-            Key="O"
-            Modifiers="Ctrl"
-            Command="{StaticResource OpenRepositoryCommand}"/>
-        <KeyBinding
-            Key="S"
-            Modifiers="Ctrl"
-            Command="{StaticResource BrowseMnistDirectoryCommand}"/>
         <KeyBinding
             Key="Left" 
             Command="{Binding ChangeFontCommand}">
@@ -39,6 +30,14 @@
                 <sys:Int32>1</sys:Int32>
             </KeyBinding.CommandParameter>
         </KeyBinding>
+        <KeyBinding
+            Key="O"
+            Modifiers="Ctrl"
+            Command="{StaticResource OpenRepositoryCommand}"/>
+        <KeyBinding
+            Key="S"
+            Modifiers="Ctrl"
+            Command="{StaticResource BrowseMnistDirectoryCommand}"/>
         <KeyBinding 
             Key="Return" 
             Command="{Binding AddFontToBucketCommand}" 
@@ -119,6 +118,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
+
                 <TextBlock 
                     Grid.Row="0"
                     Margin="0,50,0,20"
@@ -219,6 +219,7 @@
                         Text="Font Bucket"/>
                 </Grid>
                 <ScrollViewer
+                    Focusable="False"
                     Grid.Row="1"
                     Margin="20,0"
                     HorizontalScrollBarVisibility="Disabled"
@@ -227,24 +228,26 @@
                         <behaviors:AutoScrollToEndBehavior/>
                     </i:Interaction.Behaviors>
                     <ItemsControl
+                        Focusable="False"
                         HorizontalAlignment="Center"
                         BorderThickness="0"
                         ItemsSource="{Binding FontBucket, Mode=OneWay}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock 
-                                    Margin="4,4"
+                                <Button 
+                                    Margin="10,4"
                                     FontSize="16"
-                                    MaxHeight="32"
-                                    VerticalAlignment="Top"
                                     HorizontalAlignment="Center"
-                                    TextAlignment="Center"
-                                    Text="{Binding Mode=OneWay}"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{Binding Mode=OneWay}"
+                                    Style="{StaticResource HyperlinkButtonStyle}"
+                                    Command="{StaticResource SelectFontCommand}"
+                                    CommandParameter="{Binding Path, Mode=OneWay}"
                                     FontWeight="{Binding Weight, Converter={StaticResource FontWeightConverter}, Mode=OneWay}"
                                     FontStyle="{Binding Style, Converter={StaticResource FontStyleConverter}, Mode=OneWay}"
                                     FontFamily="{Binding Converter={StaticResource FontFamilyConverter}, Mode=OneWay}"
-                                    Foreground="{StaticResource LightForegroundBrush}">
-                                </TextBlock>
+                                    Background="{StaticResource DarkBackgroundBrush}"
+                                    Foreground="{StaticResource LightForegroundBrush}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

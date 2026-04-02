@@ -16,3 +16,18 @@ public enum FontCategory
     Display,
     Monospace
 }
+
+
+public enum FontWeight
+{
+    Undefined,
+    Thin,
+    ExtraLight,
+    Light,
+    Normal,
+    Medium,
+    SemiBold,
+    Bold,
+    ExtraBold,
+    Black
+}

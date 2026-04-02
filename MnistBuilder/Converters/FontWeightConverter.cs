@@ -8,18 +8,18 @@ public class FontWeightConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is int weight)
+        if (value is Model.FontWeight weight)
         {
             return weight switch
             {
-                <= 150 => FontWeights.Thin,
-                <= 250 => FontWeights.ExtraLight,
-                <= 350 => FontWeights.Light,
-                <= 450 => FontWeights.Normal,
-                <= 550 => FontWeights.Medium,
-                <= 650 => FontWeights.SemiBold,
-                <= 750 => FontWeights.Bold,
-                <= 850 => FontWeights.ExtraBold,
+                Model.FontWeight.Thin => FontWeights.Thin,
+                Model.FontWeight.ExtraLight => FontWeights.ExtraLight,
+                Model.FontWeight.Light => FontWeights.Light,
+                Model.FontWeight.Normal => FontWeights.Normal,
+                Model.FontWeight.Medium => FontWeights.Medium,
+                Model.FontWeight.SemiBold => FontWeights.SemiBold,
+                Model.FontWeight.Bold => FontWeights.Bold,
+                Model.FontWeight.ExtraBold=> FontWeights.ExtraBold,
                 _ => FontWeights.Black
             };
         }

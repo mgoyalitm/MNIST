@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Configuration;
 using System.Xml;
+using MNIST.View.Dialogs;
 
 namespace MNIST;
 
@@ -124,5 +125,11 @@ public partial class App : Application
             configXml.DocumentElement.AppendChild(element);
             configXml.Save(config.FilePath);
         }
+    }
+
+    public static bool? GetConfirmation(string title, string body, string warning)
+    {
+        ConfirmDialog dialog = new(title, body, warning);
+        return dialog.ShowDialog();
     }
 }

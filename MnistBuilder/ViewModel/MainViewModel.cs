@@ -90,7 +90,6 @@ public partial class MainViewModel : INotifyPropertyChanged
         try
         {
             await semaphoreInitialize.WaitAsync(cancellationToken);
-
             List<FontModel> fonts = [];
 
             await foreach (FontModel font in FontManager.DiscoverFontsAsync(App.RepositoryPath, cancellationToken))
