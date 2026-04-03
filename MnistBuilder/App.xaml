@@ -19,7 +19,10 @@
             <viewmodel:MainViewModel x:Key="ViewModel"/>
             <commands:OpenRepositoryCommand x:Key="OpenRepositoryCommand"/>
             <commands:BrowseMnistDirectoryCommand x:Key="BrowseMnistDirectoryCommand"/>
+            <commands:FilterCommand x:Key="FilterCommand"/>
             <commands:SelectFontCommand x:Key="SelectFontCommand"/>
+            <commands:BulkImportCommand x:Key="BulkImportCommand"/>
+            <commands:BulkRemoveCommand x:Key="BulkRemoveCommand"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>

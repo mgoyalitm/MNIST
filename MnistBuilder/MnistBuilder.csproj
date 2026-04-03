@@ -7,10 +7,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<RootNamespace>MNIST</RootNamespace>
+		<ApplicationIcon>pytorch.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="Resources\Alias.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="pytorch.ico" />
 	</ItemGroup>
 
 	<ItemGroup>

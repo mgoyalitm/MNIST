@@ -1,5 +1,4 @@
 ﻿namespace MNIST.ViewModel.Commands;
-
 public class GenerateMNISTCommand: IProgress<int>, ICommand, INotifyPropertyChanged
 {
     private bool isRunning;

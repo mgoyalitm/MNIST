@@ -62,7 +62,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!-- Long Helpo Item Style -->
+    <!-- Long Help Item Style -->
     <Style x:Key="HelpItemLongStyle" TargetType="control:HelpItemControl">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -73,7 +73,7 @@
                 <ControlTemplate TargetType="control:HelpItemControl">
                     <Grid Opacity="1" Margin="0,5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="180" />
                             <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
@@ -107,7 +107,7 @@
     </Style>
     <!-- Accented Button Style -->
     <Style x:Key="AccentedButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource AccentBrushLight}" />
+        <Setter Property="Background" Value="{StaticResource AccentBrushDark}" />
         <Setter Property="Foreground" Value="{StaticResource PitchBlackBackgroundBrush}" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Focusable" Value="False" />
@@ -129,7 +129,7 @@
                     <ControlTemplate.Triggers>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" TargetName="ButtonBody" Value="0.3"/>
+                            <Setter Property="Opacity" TargetName="ButtonBody" Value="0.8"/>
                         </Trigger>
                         <!-- Pressed -->
                         <MultiTrigger>
@@ -139,6 +139,7 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Opacity" TargetName="ButtonBody" Value="0.8"/>
+                                <Setter Property="Background" Value="{StaticResource AccentBrush}" />
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <!-- Mouse Over -->
@@ -149,18 +150,7 @@
                                 <Condition Property="IsMouseOver" Value="True"/>
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
-                                <Setter Property="Opacity" Value="1" />
-                            </MultiTrigger.Setters>
-                        </MultiTrigger>
-                        <!-- Normal -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsEnabled" Value="True"/>
-                                <Condition Property="IsPressed" Value="False"/>
-                                <Condition Property="IsMouseOver" Value="False"/>
-                            </MultiTrigger.Conditions>
-                            <MultiTrigger.Setters>
-                                <Setter Property="Opacity" Value="0.6" />
+                                <Setter Property="Background" Value="{StaticResource AccentBrushLight}" />
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
@@ -200,6 +190,61 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter> 
+    </Style>
+    
+    <!-- Accected List Box Item Style -->
+    <Style x:Key="AccectedListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}" />
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="Width" Value="160" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="BorderThickness" Value="0.5" />
+        <Setter Property="BorderBrush" Value="{StaticResource GrayForegroundBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border
+                        Focusable="{TemplateBinding Focusable}"
+                        x:Name="ListViewItemBox"
+                        CornerRadius="3"
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter Focusable="{TemplateBinding Focusable}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource AccentBrushLight}" />
+                            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="False"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource AccentBrushDark}" />
+                            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}" />
+                        </MultiTrigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     
 </ResourceDictionary>

@@ -1,0 +1,275 @@
+﻿<Window 
+    x:Class="MNIST.View.FilterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:model="clr-namespace:MNIST.Model"
+    xmlns:ext="clr-namespace:MNIST.Behaviors"
+    xmlns:viewmodel="clr-namespace:MNIST.ViewModel"
+    xmlns:command="clr-namespace:MNIST.ViewModel.Commands"
+    xmlns:ctrl="clr-namespace:MNIST.Controls"
+    x:Name="FilterControl"
+    mc:Ignorable="d"
+    ShowInTaskbar="False"
+    WindowStyle="None"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    BorderThickness="0.5"
+    BorderBrush="{StaticResource DarkBackgroundBrush}"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    Title="Bulk Import" 
+    Width="800"
+    DataContext="{Binding Source={StaticResource ViewModel}, Path=FilterViewModel, Mode=OneWay}">
+    <Window.Resources>
+        <command:DialogResultCommand x:Key="CloseWindowCommand" DialogResult="False"/>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Esc"
+            Command="{StaticResource CloseWindowCommand}"
+            CommandParameter="{x:Reference Name=FilterControl}"/>
+        <KeyBinding
+            Key="Return"
+            Command="{StaticResource BulkImportCommand}"/>
+        <KeyBinding
+            Key="Delete"
+            Command="{StaticResource BulkRemoveCommand}"/>
+    </Window.InputBindings>
+    <Grid MinHeight="300" Background="{StaticResource BackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="150" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="16" />
+        </Grid.RowDefinitions>
+        <!-- Title Bar -->
+        <Border 
+            Grid.Row="0"
+            Grid.ColumnSpan="10"
+            Margin="1,0.5"
+            x:Name="TitleBar"
+            CornerRadius="2"
+            Background="{StaticResource DarkBackgroundBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock 
+                    Margin="13,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Foreground="{StaticResource GrayForegroundBrush}"
+                    Text="{Binding ElementName=FilterControl, Path=Title, Mode=OneWay}"/>
+                <Button
+                    Foreground="{StaticResource LightForegroundBrush}"
+                    Background="{StaticResource DarkBackgroundBrush}"
+                    Style="{StaticResource AccentedButtonStyle}"
+                    Grid.Column="1"
+                    Width="30"
+                    Height="30"
+                    FontFamily="Segoe MDL2 Assets"
+                    Command="{StaticResource CloseWindowCommand}"
+                    CommandParameter="{x:Reference Name=FilterControl}"
+                    Content="&#xE711;"/>
+            </Grid>
+        </Border>
+
+        <!-- Font Categories -->
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBlock 
+                FontSize="18"
+                Text="Font Categories"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="{StaticResource AccentBrush}"/>
+            <ListView
+                Margin="0,5,0,0"
+                Focusable="False"
+                Grid.Row="1"
+                Foreground="White"
+                FontSize="16"
+                BorderThickness="0"
+                Background="Transparent"
+                SelectionMode="Multiple"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                ext:ListBoxExtension.Selections="{Binding SelectedFontCategories, Mode=TwoWay}"
+                ext:ListBoxExtension.IsMultiSelect="True"
+                ItemContainerStyle="{StaticResource AccectedListBoxItemStyle}"
+                ItemsSource="{Binding FontCategories, Mode=OneWay}"/>
+        </Grid>
+        <!-- Font Styles -->
+        <Grid
+            Grid.Row="2"
+            Grid.Column="2"
+            HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBlock 
+                FontSize="18"
+                Text="Font Styles"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="{StaticResource AccentBrush}"/>
+            <ListView
+                Margin="0,5,0,0"
+                Focusable="False"
+                Grid.Row="1"
+                Foreground="White"
+                FontSize="16"
+                BorderThickness="0"
+                Background="Transparent"
+                SelectionMode="Multiple"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                ext:ListBoxExtension.Selections="{Binding SelectedFontStyles, Mode=TwoWay}"
+                ext:ListBoxExtension.IsMultiSelect="True"
+                ItemContainerStyle="{StaticResource AccectedListBoxItemStyle}"
+                ItemsSource="{Binding FontStyles, Mode=OneWay}"/>
+        </Grid>
+        <!-- Font Weights -->
+        <Grid
+            Margin="10,0,0,0"
+            Grid.Row="2"
+            Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBlock 
+                FontSize="18"
+                Text="Font Weights"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="{StaticResource AccentBrush}"/>
+            <ListView
+                Margin="0,5,0,0"
+                Focusable="False"
+                Grid.Row="1"
+                Foreground="White"
+                FontSize="16"
+                BorderThickness="0"
+                Background="Transparent"
+                SelectionMode="Multiple"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                ext:ListBoxExtension.Selections="{Binding SelectedFontWeights, Mode=TwoWay}"
+                ext:ListBoxExtension.IsMultiSelect="True"
+                ItemContainerStyle="{StaticResource AccectedListBoxItemStyle}"
+                ItemsSource="{Binding FontWeights, Mode=OneWay}"/>
+        </Grid>
+        <ProgressBar 
+            Height="3" 
+            Grid.Row="3" 
+            Grid.ColumnSpan="5"
+            Margin="40,0"
+            VerticalAlignment="Center"
+            IsIndeterminate="True"
+            Visibility="{Binding Source={StaticResource BulkImportCommand}, Path=Importing, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+            Foreground="{StaticResource AccentBrush}"/>
+        <Grid
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="186" />
+                <ColumnDefinition Width="186" />
+            </Grid.ColumnDefinitions>
+            <Viewbox
+                Focusable="False"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Margin="20,0,0,0"
+                Height="20"
+                Grid.Column="0"
+                Grid.ColumnSpan="3">
+                <CheckBox
+                    Focusable="False"
+                    IsChecked="{Binding ShowFilteredResults, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Foreground="{StaticResource LightForegroundBrush}"
+                    Content="Filter Results"/>
+            </Viewbox>
+            <Button 
+                Grid.Column="1"
+                Margin="16,0"
+                Padding="20,4"
+                FontSize="16"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Right"
+                Width="150"
+                Style="{StaticResource AccentedButtonStyle}"
+                Content="Import"
+                Command="{StaticResource BulkImportCommand}"/>
+            <Button
+                Grid.Column="2"
+                Margin="16,0"
+                Padding="20,4"
+                FontSize="16"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Left"
+                Width="150"
+                Style="{StaticResource AccentedButtonStyle}"
+                Content="Remove"
+                Command="{StaticResource BulkRemoveCommand}"/>
+        </Grid>
+        <Grid 
+            Grid.Column="7"
+            Grid.Row="1" 
+            Grid.RowSpan="10"
+            Background="{StaticResource DarkBackgroundBrush}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Margin="0,20"
+                FontSize="16"
+                Text="Shortcut Keys"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Foreground="{StaticResource AccentBrush}"/>
+            <ctrl:HelpItemControl
+                Grid.Row="1"
+                Margin="0,20"
+                HelpKey="Enter"
+                HelpText="Bulk Import"/>
+            <ctrl:HelpItemControl
+                Grid.Row="2"
+                Margin="0,20"
+                HelpKey="Delete"
+                HelpText="Bulk Remove"/>
+            <ctrl:HelpItemControl 
+                Grid.Row="3" 
+                Margin="0,20"
+                HelpKey="Esc" 
+                HelpText="Close Window"/>
+        </Grid>
+    </Grid>
+</Window>

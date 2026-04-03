@@ -5,19 +5,21 @@ public partial class MainViewModel : INotifyPropertyChanged
     private int selectedFontIndex;
     private bool fontsLoaded;
     private readonly SemaphoreSlim semaphoreInitialize = new(1);
-    private readonly SemaphoreSlim semaphoreGenerate = new(1);
     public event PropertyChangedEventHandler PropertyChanged;
 
     public MainViewModel()
     {
         FontBucket = [];
+        FontBucket.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FontBucketSize));
         ChangeFontCommand = new ChangeFontCommand();
         AddFontToBucketCommand = new AddFontToBucketCommand();
         DeleteFontCommand = new DeleteFontCommand();
         ClearBucketCommand = new ClearBucketCommand();
         GenerateMNISTCommand = new GenerateMNISTCommand();
+        FilterViewModel = new();
     }
 
+    public FilterViewModel FilterViewModel { get; }
     public ICommand ChangeFontCommand { get; }
     public ICommand AddFontToBucketCommand { get; }
     public ICommand DeleteFontCommand { get; }
@@ -79,6 +81,7 @@ public partial class MainViewModel : INotifyPropertyChanged
     public FontModel SelectedFont => availableFonts.Length == 0 ? null : availableFonts[selectedFontIndex];
 
     public ObservableCollection<FontModel> FontBucket { get; }
+    public int FontBucketSize => FontBucket.Count;
 
     public async Task InitializeFontsAsync(CancellationToken cancellationToken = default)
     {

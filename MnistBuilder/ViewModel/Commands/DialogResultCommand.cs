@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 namespace MNIST.ViewModel.Commands;
-public class DialogButton : ICommand
+public class DialogResultCommand : ICommand
 {
     public bool? DialogResult { get; set; }
     public event EventHandler CanExecuteChanged { add { } remove { } }

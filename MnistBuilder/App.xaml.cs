@@ -1,8 +1,8 @@
-﻿using MNIST.ViewModel;
-using System.Windows;
-using System.Configuration;
-using System.Xml;
+﻿using MNIST.View;
 using MNIST.View.Dialogs;
+using System.Configuration;
+using System.Windows;
+using System.Xml;
 
 namespace MNIST;
 
@@ -12,6 +12,12 @@ public partial class App : Application
     private const string DestinationKey = "Destination";
     private const string SelectedFontKey = "SelectedFont";
     private const string FontBucketKey = "FontBucket";
+    private const string FilterKey = "Filters";
+    private const string StyleKey = "Style";
+    private const string ValueKey = "value";
+    private const string WeightKey = "Weight";
+    private const string FilteredPreviewKey = "FilterPreview";
+    private const string CategoryKey = "Category";
     private const string FontItemKey = "Font";
     private const string FontPathKey = "path";
     private const string ViewModelKey = "ViewModel";
@@ -19,7 +25,21 @@ public partial class App : Application
     public static ViewModel.MainViewModel ViewModel { get; private set; }
     public static string RepositoryPath { get; set; }
     public static string DestinationPath { get; set; }
-    
+
+    protected override void OnActivated(EventArgs e)
+    {
+
+        foreach (Window window in Current.Windows.Cast<Window>())
+        {
+            if (window is not View.MainWindow)
+            {
+                window.Activate();
+            }
+        }
+
+        base.OnActivated(e);
+    }
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         EnsureConfigurationCreated();
@@ -34,7 +54,7 @@ public partial class App : Application
             string selected_font_path = config.AppSettings.Settings[SelectedFontKey].Value;
 
             Dictionary<string, FontModel> font_map = [];
-     
+
             foreach (FontModel font in viewModel.AvailableFonts)
             {
                 font_map[font.Path] = font;
@@ -53,6 +73,48 @@ public partial class App : Application
             XmlDocument configXml = new();
             configXml.Load(config.FilePath);
             XmlElement bucket = configXml.DocumentElement.SelectSingleNode(FontBucketKey) as XmlElement;
+            XmlElement filters = configXml.DocumentElement.SelectSingleNode(FilterKey) as XmlElement;
+            
+            List<Model.FontStyle> styles = [];
+            List<Model.FontWeight> weights = [];
+            List<FontCategory> categories = [];
+
+            if (filters.SelectSingleNode(FilteredPreviewKey) is XmlElement preview_element && 
+                bool.TryParse(preview_element.GetAttribute(ValueKey), out bool apply_filter))
+            {
+                viewModel.FilterViewModel.ShowFilteredResults = apply_filter;
+            }
+
+
+            foreach (XmlElement element in filters.SelectNodes(StyleKey))
+            {
+                string style_text = element.GetAttribute(ValueKey);
+
+                if (Enum.TryParse(style_text, out Model.FontStyle style))
+                {
+                    styles.Add(style);
+                }
+            }
+
+            foreach (XmlElement element in filters.SelectNodes(WeightKey))
+            {
+                string weight_text = element.GetAttribute(ValueKey);
+
+                if (Enum.TryParse(weight_text, out Model.FontWeight weight))
+                {
+                    weights.Add(weight);
+                }
+            }
+
+            foreach (XmlElement element in filters.SelectNodes(CategoryKey))
+            {
+                string category_text = element.GetAttribute(ValueKey);
+
+                if (Enum.TryParse(category_text, out FontCategory category))
+                {
+                    categories.Add(category);
+                }
+            }
 
             foreach (XmlElement element in bucket.SelectNodes(FontItemKey))
             {
@@ -63,6 +125,10 @@ public partial class App : Application
                     viewModel.FontBucket.Add(font);
                 }
             }
+
+            viewModel.FilterViewModel.SelectedFontStyles = styles;
+            viewModel.FilterViewModel.SelectedFontWeights = weights;
+            viewModel.FilterViewModel.SelectedFontCategories = categories;
         }
 
         base.OnStartup(e);
@@ -82,7 +148,35 @@ public partial class App : Application
         XmlDocument configXml = new();
         configXml.Load(config.FilePath);
         XmlElement bucket = configXml.DocumentElement.SelectSingleNode(FontBucketKey) as XmlElement;
+        XmlElement filters = configXml.DocumentElement.SelectSingleNode(FilterKey) as XmlElement;
+        filters.RemoveAll();
         bucket.RemoveAll();
+
+        XmlElement preview = filters.SelectSingleNode(FilteredPreviewKey) as XmlElement;
+        preview = configXml.CreateElement(FilteredPreviewKey);
+        preview.SetAttribute(ValueKey, ViewModel.FilterViewModel.ShowFilteredResults.ToString());
+        filters.AppendChild(preview);
+        
+        foreach (Model.FontStyle style in ViewModel.FilterViewModel.SelectedFontStyles.Cast<Model.FontStyle>())
+        {
+            XmlElement element = configXml.CreateElement(StyleKey);
+            element.SetAttribute(ValueKey, style.ToString());
+            filters.AppendChild(element);
+        }
+
+        foreach (Model.FontWeight weight in ViewModel.FilterViewModel.SelectedFontWeights.Cast<Model.FontWeight>())
+        {
+            XmlElement element = configXml.CreateElement(WeightKey);
+            element.SetAttribute(ValueKey, weight.ToString());
+            filters.AppendChild(element);
+        }
+
+        foreach (FontCategory category in ViewModel.FilterViewModel.SelectedFontCategories.Cast<FontCategory>())
+        {
+            XmlElement element = configXml.CreateElement(CategoryKey);
+            element.SetAttribute(ValueKey, category.ToString());
+            filters.AppendChild(element);
+        }
 
         foreach (string path in ViewModel.FontBucket.Select(x => x.Path))
         {
@@ -119,17 +213,30 @@ public partial class App : Application
         XmlDocument configXml = new();
         configXml.Load(config.FilePath);
 
+        if (configXml.DocumentElement.SelectSingleNode(FilterKey) is null)
+        {
+            XmlElement element = configXml.CreateElement(FilterKey);
+            configXml.DocumentElement.AppendChild(element);
+        }
+
         if (configXml.DocumentElement.SelectSingleNode(FontBucketKey) is null)
         {
             XmlElement element = configXml.CreateElement(FontBucketKey);
             configXml.DocumentElement.AppendChild(element);
-            configXml.Save(config.FilePath);
         }
+
+        configXml.Save(config.FilePath);
     }
 
     public static bool? GetConfirmation(string title, string body, string warning)
     {
         ConfirmDialog dialog = new(title, body, warning);
         return dialog.ShowDialog();
+    }
+
+    public static void ShowFilters()
+    {
+        FilterWindow filter = new();
+        filter.ShowDialog();
     }
 }

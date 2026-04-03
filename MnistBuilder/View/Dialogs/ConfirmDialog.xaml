@@ -20,8 +20,8 @@
     Height="auto" 
     Width="430">
     <Window.Resources>
-        <command:DialogButton x:Key="Confirm" DialogResult="True"/>
-        <command:DialogButton x:Key="Deny" DialogResult="False"/>
+        <command:DialogResultCommand x:Key="Confirm" DialogResult="True"/>
+        <command:DialogResultCommand x:Key="Deny" DialogResult="False"/>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding
