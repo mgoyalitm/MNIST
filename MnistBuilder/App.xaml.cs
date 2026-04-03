@@ -66,7 +66,7 @@ public partial class App : Application
 
             if (font_map.TryGetValue(selected_font_path, out FontModel selected))
             {
-                int index = viewModel.AvailableFonts.IndexOf(selected);
+                int index = Array.IndexOf(viewModel.AvailableFonts, selected);
 
                 if (index != -1)
                 {

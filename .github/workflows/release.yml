@@ -1,0 +1,47 @@
+name: Build & Release MNIST Builder
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Publish (single-file)
+        run: >
+          dotnet publish MnistBuilder/MnistBuilder.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=None
+          -o publish
+
+      - name: Prepare clean package
+        run: |
+          mkdir clean
+          copy publish\*.exe clean\
+          copy publish\*.dll clean\
+
+      - name: Zip output
+        run: Compress-Archive -Path clean\* -DestinationPath MNIST-Builder.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MNIST-Builder.zip

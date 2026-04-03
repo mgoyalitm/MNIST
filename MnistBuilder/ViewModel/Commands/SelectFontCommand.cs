@@ -9,7 +9,7 @@ public class SelectFontCommand : ICommand
         {
             FontModel target = App.ViewModel.AvailableFonts.FirstOrDefault(x => x.Path == font_path);
             
-            if (App.ViewModel.AvailableFonts?.IndexOf(target) is int index && index != -1)
+            if (Array.IndexOf(App.ViewModel.AvailableFonts, target) is int index && index != -1)
             {
                 App.ViewModel.SelectedFontIndex = index;
             }
