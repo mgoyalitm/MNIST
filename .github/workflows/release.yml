@@ -32,14 +32,11 @@ jobs:
           -p:DebugType=None
           -o publish
 
-      - name: Prepare clean package
-        run: |
-          mkdir clean
-          copy publish\*.exe clean\
-          copy publish\*.dll clean\
+      - name: Remove debug symbols
+        run: del publish\*.pdb
 
       - name: Zip output
-        run: Compress-Archive -Path clean\* -DestinationPath MNIST-Builder.zip
+        run: Compress-Archive -Path publish\* -DestinationPath MNIST-Builder.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
