@@ -99,7 +99,7 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
 <p align="center">
   <img src="assets/images/generate-mnist.png" width="70%" alt="MNIST generation progress"/>
   <br/>
-  <b>MNIST dataset generation in progress bar</b>
+  <b>MNIST dataset generation progress shown on progress bar</b>
 </p>
 
 #### MNIST Output Structure
