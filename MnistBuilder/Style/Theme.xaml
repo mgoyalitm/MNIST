@@ -4,7 +4,6 @@
     xmlns:control="clr-namespace:MNIST.Controls"
     xmlns:converter="clr-namespace:MNIST.Converters">
     <converter:ContentToTextConverter x:Key="ContentToTextConverter"/>
-
     <!-- Accented Brushes -->
     <SolidColorBrush x:Key="AccentBrushLight" Color="Gold"/>
     <SolidColorBrush x:Key="AccentBrush" Color="Goldenrod"/>
@@ -20,6 +19,7 @@
     <SolidColorBrush x:Key="GrayForegroundBrush" Color="#A2A2A2"/>
     <SolidColorBrush x:Key="DarkGrayForegroundBrush" Color="#727272"/>
     <SolidColorBrush x:Key="PreviewFontForegroundBrush" Color="#FFFFFF"/>
+    
     <!-- Default Help Item Style-->
     <Style TargetType="control:HelpItemControl">
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -246,5 +246,45 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="AccentedMenuItemStyle" TargetType="MenuItem">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border 
+                        x:Name="Root"
+                        BorderBrush="Transparent"
+                        BorderThickness="1.5"
+                        Margin="-1.5"
+                        CornerRadius="3"
+                        MinWidth="120"
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter 
+                                Grid.Column="0" 
+                                Margin="10,2,8,2" 
+                                ContentSource="Icon" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                            <ContentPresenter Margin="2" Grid.Column="1" ContentSource="Header" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Hover -->
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource AccentBrush}"/>
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrushDark}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

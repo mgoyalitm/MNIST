@@ -256,7 +256,20 @@
                                     FontStyle="{Binding Style, Converter={StaticResource FontStyleConverter}, Mode=OneWay}"
                                     FontFamily="{Binding Path, Converter={StaticResource FontFamilyConverter}, Mode=OneWay}"
                                     Background="{StaticResource DarkBackgroundBrush}"
-                                    Foreground="{StaticResource LightForegroundBrush}"/>
+                                    Foreground="{StaticResource LightForegroundBrush}">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem 
+                                                Command="{Binding Source={StaticResource ViewModel}, Path=DeleteFontCommand}"
+                                                CommandParameter="{Binding Mode=OneWay}"
+                                                Style="{StaticResource AccentedMenuItemStyle}" Header="Delete">
+                                                <MenuItem.Icon>
+                                                    <TextBlock Text="&#xE74D;"  FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
