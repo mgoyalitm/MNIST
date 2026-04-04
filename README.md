@@ -118,6 +118,15 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
     ├── upper_C/
     ├── ...
 
+### Closing & Relaunch:
+- On closing the application, the current state is saved automatically  
+- On next launch, the application restores the previous session:
+  - Previously selected Google Fonts repository  
+  - Bucket contents  
+  - Applied filters  
+  - Last previewed font  
+- This allows you to continue from where you left off without reconfiguration  
+- State restoration works only if the application is closed properly  
 
 ## Keyboard Shortcuts
 
