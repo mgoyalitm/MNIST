@@ -99,7 +99,7 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
 <p align="center">
   <img src="assets/images/generate-mnist.png" width="70%" alt="MNIST generation progress"/>
   <br/>
-  <b>MNIST dataset generation in progress with status bar</b>
+  <b>MNIST dataset generation in progress bar</b>
 </p>
 
 #### MNIST Output Structure
@@ -125,14 +125,14 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
 
 | **Key** | Action |
 |-----|--------|
-| `Ctrl + O` | Open and select the Google Fonts repository root directory |
-| `Ctrl + S` | Set the output directory for MNIST dataset generation |
-| `F5` | Generate and write the MNIST dataset (21×21 images) to disk |
-| `← / →` | Navigate to previous / next font |
-| `Enter` | Add the currently previewed font to the bucket |
-| `Delete` | Remove the currently previewed font from the bucket |
-| `Shift + Delete` | Clear all fonts from the bucket (with confirmation) |
-| `Ctrl + F` | Open the filter dialog |
+| Ctrl + O | Open and select the Google Fonts repository root directory |
+| Ctrl + S | Set the output directory for MNIST dataset generation |
+| F5 | Generate and write the MNIST dataset (21×21 images) to disk |
+| ← / → | Navigate to previous / next font |
+| Enter | Add the currently previewed font to the bucket |
+| Delete | Remove the currently previewed font from the bucket |
+| Shift + Delete | Clear all fonts from the bucket (with confirmation) |
+| Ctrl + F | Open the filter dialog |
 
 ---
 
@@ -140,9 +140,9 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
 
 | Key | Action |
 |-----|--------|
-| `Enter` | Import all fonts matching the selected filter criteria into the bucket |
-| `Delete` | Remove all fonts from the bucket that match the current filter criteria |
-| `Esc` | Close the filter dialog |
+| Enter | Import all fonts matching the selected filter criteria into the bucket |
+| Delete | Remove all fonts from the bucket that match the current filter criteria |
+| Esc | Close the filter dialog |
 
 ---
 
@@ -150,5 +150,5 @@ The application loads fonts, renders glyphs across digits, lowercase, and upperc
 
 | Key | Action |
 |-----|--------|
-| `Enter` | Confirm action (equivalent to clicking **Yes**) |
-| `Esc` | Cancel action (equivalent to clicking **No**) |
+| Enter | Confirm action (equivalent to clicking **Yes**) |
+| Esc | Cancel action (equivalent to clicking **No**) |
