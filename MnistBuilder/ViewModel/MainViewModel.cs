@@ -6,6 +6,7 @@ public partial class MainViewModel : INotifyPropertyChanged
     private int selectedFontIndex;
     private bool fontsLoaded;
     private bool fontLoading;
+    private int selectedBucketFontIndex;
     private readonly SemaphoreSlim semaphoreInitialize = new(1);
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -92,6 +93,7 @@ public partial class MainViewModel : INotifyPropertyChanged
             }
         }
     }
+
 
     public FontModel SelectedFont => availableFonts.Length == 0 ? null : availableFonts[selectedFontIndex];
 

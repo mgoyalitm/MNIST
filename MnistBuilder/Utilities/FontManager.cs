@@ -17,9 +17,9 @@ public static class FontManager
     private const string FileTag = @"filename:";
     private const string StyleTag = @"style:";
     private const string WeightTag = @"weight:";
-    private const int draw_length = CharSize * 12;
-    private const int semi_draw_length = draw_length / 2;
-    private const int text_draw_length = draw_length / 3;
+    private const int DrawLength = CharSize * 12;
+    private const int SemiDrawLength = DrawLength / 2;
+    private const int TextDrawLength = DrawLength / 3;
     private const byte BlackThreshold = 96;
 
     public static async IAsyncEnumerable<FontModel> DiscoverFontsAsync(string directory, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -146,7 +146,7 @@ public static class FontManager
         return SKColorFilter.CreateColorMatrix(matrix);
     }
 
-    public static async Task WriteMNISTAsync(string font_directory, FontModel[] fonts, IProgress<int> progress, CancellationToken cancellationToken = default)
+    public static async Task WriteMNISTAsync(FontModel[] fonts, IProgress<int> progress, CancellationToken cancellationToken = default)
     {
         int current = 0;
 
@@ -174,7 +174,7 @@ public static class FontManager
             string font_name = Path.GetFileNameWithoutExtension(font.Path);
 
             using SKTypeface typeface = SKTypeface.FromFile(font.Path);
-            using SKFont sk_font = new(typeface, text_draw_length);
+            using SKFont sk_font = new(typeface, TextDrawLength);
             float offset_rotation = font.Style is FontStyle.Italic ? -RotationStepSize : 0f;
 
             for (int n = 0; n < CharacterCount; n++)
@@ -202,12 +202,12 @@ public static class FontManager
 
     private static byte[] GetCharData(char character, float rotation, SKFont sk_font, SKPaint paint)
     {
-        using SKBitmap bitmap = new(draw_length, draw_length);
+        using SKBitmap bitmap = new(DrawLength, DrawLength);
         using SKCanvas canvas = new(bitmap);
 
         canvas.Clear(SKColors.White);
         canvas.Save();
-        canvas.Translate(semi_draw_length, semi_draw_length);
+        canvas.Translate(SemiDrawLength, SemiDrawLength);
         canvas.RotateDegrees(rotation);
         canvas.DrawText(character.ToString(), 0, 0, sk_font, paint);
         canvas.Restore();

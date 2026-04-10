@@ -75,7 +75,7 @@ public class GenerateMNISTCommand: IProgress<int>, ICommand, INotifyPropertyChan
             Total = fonts.Length * FontManager.CharacterCount * FontManager.RotationSteps;
             IsExecuting = true;
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-            await FontManager.WriteMNISTAsync(App.DestinationZipPath, fonts, this);
+            await FontManager.WriteMNISTAsync(fonts, this);
         }
         finally
         {
@@ -93,7 +93,7 @@ public class GenerateMNISTCommand: IProgress<int>, ICommand, INotifyPropertyChan
     public void Report(int value) => Current = value;
 
 
-    private bool ValidateZipPath()
+    private static bool ValidateZipPath()
     {
         try
         {
